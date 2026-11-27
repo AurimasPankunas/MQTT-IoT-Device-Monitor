@@ -10,9 +10,12 @@
 #include <unistd.h>
 #include <mosquitto.h>
 #include <cjson/cJSON.h>
+#include "../include/telemetry.h"
+#include "../include/handler.h"
 
 void on_connect(struct mosquitto *mosq, void *obj, int rc);
 void on_message(struct mosquitto *mosq, void *obj, const struct mosquitto_message *msg);
+int mqtt_client();
 
 void on_connect(struct mosquitto *mosq, void *obj, int rc) {
     printf("ID: %d\n", * (int *) obj);
@@ -24,12 +27,13 @@ void on_connect(struct mosquitto *mosq, void *obj, int rc) {
 }
 
 void on_message(struct mosquitto *mosq, void *obj, const struct mosquitto_message *msg) {
-    printf("New message with topic %s: %s\n", msg->topic, (char *) msg->payload);
+    telemetry_t local;
+    printf("Parsing message\n");
+    telemetry_parse(msg, &local);
+    telemetry_handler(&local);
 }
 
-int main( int argc, char * argv[] ){
-    printf( "(C) 2026 Counts, %s\n", __FILE__ );
-
+int mqtt_client() {
     int rc, id = 12;
     mosquitto_lib_init();
     struct mosquitto *mosq;
@@ -55,3 +59,4 @@ int main( int argc, char * argv[] ){
     mosquitto_lib_cleanup();
     return 0;
 }
+
