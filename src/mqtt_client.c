@@ -13,12 +13,14 @@
 #include "../include/telemetry.h"
 #include "../include/handler.h"
 
+#define MAX_ALERTS 3
+
 void on_connect(struct mosquitto *mosq, void *obj, int rc);
 void on_message(struct mosquitto *mosq, void *obj, const struct mosquitto_message *msg);
 int mqtt_client();
 
 void on_connect(struct mosquitto *mosq, void *obj, int rc) {
-    printf("ID: %d\n", * (int *) obj);
+    //printf("ID: %d\n", * (int *) obj);
     if (rc != 0) {
         printf("Error with result code: %d\n", rc);
         exit(-1);
@@ -28,9 +30,10 @@ void on_connect(struct mosquitto *mosq, void *obj, int rc) {
 
 void on_message(struct mosquitto *mosq, void *obj, const struct mosquitto_message *msg) {
     telemetry_t local;
-    printf("Parsing message\n");
+    //printf("Parsing message\n");
     telemetry_parse(msg, &local);
-    telemetry_handler(&local);
+    alert_code alerts[MAX_ALERTS];
+    telemetry_handler(&local, alerts, MAX_ALERTS);
 }
 
 int mqtt_client() {

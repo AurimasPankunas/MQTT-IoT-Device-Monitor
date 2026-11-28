@@ -36,7 +36,7 @@ int telemetry_parse(const struct mosquitto_message *msg, telemetry_t *out) {
         out->humidity = humidity->valuedouble;
         out->battery = battery->valuedouble;
         out->timestamp = timestamp->valuedouble;
-        printf("Message parsed!\n");
+        //printf("Message parsed!\n");
     } else {
         perror("cjson");
         fprintf(stderr, "JSON is missing fields or has unexpected types\n");
